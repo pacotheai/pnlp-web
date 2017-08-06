@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
-import { handleError, asJSON, ResultList } from './Common';
-import { backURI as BACK_URI, HEADERS } from './Const';
+import { asJSON, ResultList } from './Common';
+import { sentencesURI, HEADERS } from './Const';
 import { Grid,
          Row,
          Col,
@@ -19,6 +19,12 @@ import { Grid,
  * @since 0.1.0
  */
 export class Sentences extends Component {
+
+  /**
+   * Default constructor
+   *
+   * @since 0.1.0
+   */
   constructor() {
     super();
     this.state = {
@@ -27,11 +33,12 @@ export class Sentences extends Component {
       blocking: false,
       valid: false
     };
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
-    this.handleError = handleError.bind(this);
     this.blockUserInterface = this.blockUserInterface.bind(this);
     this.unblockUserInterface = this.unblockUserInterface.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   /**
@@ -52,15 +59,24 @@ export class Sentences extends Component {
       })
     };
 
-    this.blockUserInterface()
-      .then(() => fetch(BACK_URI, spec))
+    Promise
+      .resolve(this.blockUserInterface)
+      .then(() => fetch(sentencesURI, spec))
       .then(asJSON)
       .catch(this.handleError)
       .then(list => {
-        this.setState({ sentences: list, blocking: false });
+        this.setState({ sentences: list });
       }).then(this.unblockUserInterface);
   }
 
+  /**
+   * Checks whether the component's text has been set or not. It will
+   * set the state valid property to true if there's text, false
+   * otherwise
+   *
+   * @param e event triggered when changing component's text
+   * @since 0.1.0
+   */
   handleTextChange(e) {
     if (!e.target.value) {
       this.setState({ text: e.target.value , valid: false});
@@ -69,14 +85,38 @@ export class Sentences extends Component {
     }
   }
 
-  blockUserInterface() {
-    this.setState({blocking: true});
-    return Promise.resolve(1);
+  /**
+   * Prints out the error through the browser console and sets the
+   * blocking state property to false to unblock the component UI
+   *
+   * @param err
+   * @since 0.1.0
+   */
+  handleError(err) {
+    console.log("error:" + err);
+    this.setState({blocking: false});
   }
 
+  /**
+   * Blocks the component's UI by setting the state blocking property to
+   * true
+   *
+   * @return a promise with the result of setting the state
+   * @since 0.1.0
+   */
+  blockUserInterface() {
+    return Promise.resolve(this.setState({blocking: true}));
+  }
+
+  /**
+   * Unblocks the component's UI by setting the state blocking property to
+   * false
+   *
+   * @return
+   * @since 0.1.0
+   */
   unblockUserInterface() {
-    this.setState({blocking: false});
-    return Promise.resolve(1);
+    return Promise.resolve(this.setState({blocking: false}));
   }
 
   render() {

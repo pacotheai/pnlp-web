@@ -23,11 +23,6 @@ export let checkList = (list) => {
   return list.value;
 };
 
-export let handleError = (err) => {
-  console.log("error:" + err);
-  this.setState({blocking: false});
-};
-
 export let asJSON = (r) => r.json();
 
 
