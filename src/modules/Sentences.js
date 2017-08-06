@@ -17,7 +17,7 @@ export class Sentences extends Component {
         <Row className="show-grid">
         <Col xs={12}>
         <h2>Sentence detector</h2>
-        <p>A sentence detector extracts all found sentences in a given text. This service uses <a target="_blank" href="http://opennlp.apache.org/docs/1.8.1/manual/opennlp.html#tools.sentdetect">OpenNLP Sentences detector</a></p>
+        <p>A sentence detector extracts all found sentences in a given text. You can read more at <a target="_blank" href="http://opennlp.apache.org/docs/1.8.1/manual/opennlp.html#tools.sentdetect">OpenNLP Sentences documentation</a></p>
         <DefaultForm uri={sentencesURI}/>
       </Col>
         </Row>
