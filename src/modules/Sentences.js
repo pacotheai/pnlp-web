@@ -30,6 +30,8 @@ export class Sentences extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleError = handleError.bind(this);
+    this.blockUserInterface = this.blockUserInterface.bind(this);
+    this.unblockUserInterface = this.unblockUserInterface.bind(this);
   }
 
   /**
@@ -50,18 +52,13 @@ export class Sentences extends Component {
       })
     };
 
-    fetch(BACK_URI, spec)
+    this.blockUserInterface()
+      .then(() => fetch(BACK_URI, spec))
       .then(asJSON)
-      .then((json) => {
-        this.setState({blocking: true});
-        return json;
-      })
       .catch(this.handleError)
       .then(list => {
-        console.log(list);
-        let fn = () => {this.setState({ sentences: list, blocking: false }); };
-        setTimeout(fn, 3000);
-      });
+        this.setState({ sentences: list, blocking: false });
+      }).then(this.unblockUserInterface);
   }
 
   handleTextChange(e) {
@@ -70,6 +67,16 @@ export class Sentences extends Component {
     } else {
       this.setState({ text: e.target.value, valid: true });
     }
+  }
+
+  blockUserInterface() {
+    this.setState({blocking: true});
+    return Promise.resolve(1);
+  }
+
+  unblockUserInterface() {
+    this.setState({blocking: false});
+    return Promise.resolve(1);
   }
 
   render() {
